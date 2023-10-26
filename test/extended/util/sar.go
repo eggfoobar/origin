@@ -3,6 +3,7 @@ package util
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	authorizationapiv1 "k8s.io/api/authorization/v1"
@@ -20,6 +21,9 @@ func WaitForSelfSAR(interval, timeout time.Duration, c kclientset.Interface, sel
 			},
 			metav1.CreateOptions{},
 		)
+		if strings.Contains(err.Error(), "connect: connection refused") {
+			return false, nil
+		}
 		if err != nil {
 			return false, err
 		}

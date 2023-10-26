@@ -1058,6 +1058,9 @@ func (c *CLI) WaitForAccessDenied(review *kubeauthorizationv1.SelfSubjectAccessR
 func WaitForAccess(c kubernetes.Interface, allowed bool, review *kubeauthorizationv1.SelfSubjectAccessReview) error {
 	return wait.Poll(time.Second, time.Minute, func() (bool, error) {
 		response, err := c.AuthorizationV1().SelfSubjectAccessReviews().Create(context.Background(), review, metav1.CreateOptions{})
+		if strings.Contains(err.Error(), "connect: connection refused") {
+			return false, nil
+		}
 		if err != nil {
 			return false, err
 		}
