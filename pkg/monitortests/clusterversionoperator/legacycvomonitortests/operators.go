@@ -349,6 +349,12 @@ func testUpgradeOperatorStateTransitions(events monitorapi.Intervals, clientConf
 					return "openshift-samples may report Degraded with APIServerServiceUnavailableError when the API server is briefly unavailable during DualReplica upgrades"
 				}
 			}
+		case "olm":
+			if topology == configv1.HighlyAvailableArbiterMode &&
+				condition.Type == configv1.OperatorAvailable && condition.Status == configv1.ConditionFalse &&
+				condition.Reason == "CatalogdDeploymentCatalogdControllerManager_Deploying" {
+				return "clusteroperator/olm may report Available=False while catalogd-controller-manager deploys during two-node arbiter upgrades"
+			}
 		case "operator-lifecycle-manager-packageserver":
 			if condition.Type == configv1.OperatorAvailable && condition.Status == configv1.ConditionFalse && condition.Reason == "ClusterServiceVersionNotSucceeded" {
 				return "https://issues.redhat.com/browse/OCPBUGS-23744"
