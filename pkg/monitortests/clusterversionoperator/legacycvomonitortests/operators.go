@@ -122,6 +122,10 @@ func testStableSystemOperatorStateTransitions(events monitorapi.Intervals, topol
 					if strings.Contains(condition.Message, `Waiting for Deployment`) {
 						return "csi-snapshot-controller may report Available=False while Waiting for Deployment during DualReplica NoExecuteTaintManager tests"
 					}
+				case "etcd":
+					if isTNFJobClusterOperatorReason(condition.Reason) {
+						return "clusteroperator/etcd may report Available=False while a TNF batch Job is running during DualReplica NoExecuteTaintManager tests (CEO JobRunning condition reasons)"
+					}
 				case "operator-lifecycle-manager-packageserver":
 					if condition.Reason == "ClusterServiceVersionNotSucceeded" {
 						return "https://issues.redhat.com/browse/OCPBUGS-23744"
